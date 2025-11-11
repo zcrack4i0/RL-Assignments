@@ -1,0 +1,19 @@
+# Deep Learning
+torch>=2.0.0
+numpy>=1.24.0
+
+# Reinforcement Learning
+gymnasium>=0.29.0
+gymnasium[classic-control]
+
+# Experiment Tracking
+wandb>=0.15.0
+
+# Video Recording
+moviepy>=1.0.3
+opencv-python>=4.8.0
+
+# Utilities
+matplotlib>=3.7.0
+tqdm>=4.65.0
+
