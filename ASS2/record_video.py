@@ -121,6 +121,13 @@ def main():
     
     # Create environment to get dimensions
     env = gym.make(args.env)
+    
+    # Check if action space is continuous and needs discretization
+    needs_discretization = isinstance(env.action_space, spaces.Box)
+    if needs_discretization:
+        env = DiscretizedActionWrapper(env, n_bins=args.n_bins)
+        print(f"⚠️  Continuous action space detected. Using discretization with {args.n_bins} actions.")
+    
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.n
     env.close()
