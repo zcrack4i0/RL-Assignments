@@ -5,10 +5,10 @@ import argparse
 import os
 from gymnasium.wrappers import RecordVideo
 from dqn_agent import DQNAgent
-from discretize_wrapper import DiscretizedActionWrapper
+from pendulum_wrapper import DiscretePendulumWrapper, make_pendulum
 import wandb
 
-def record_agent_video(agent, env_name, num_episodes=5, video_folder='videos', wandb_log=False, n_bins=11):
+def record_agent_video(agent, env_name, num_episodes=5, video_folder='videos', wandb_log=False, n_bins=5):
     """
     Record videos of a trained agent playing.
     
@@ -18,7 +18,7 @@ def record_agent_video(agent, env_name, num_episodes=5, video_folder='videos', w
         num_episodes (int): Number of episodes to record
         video_folder (str): Folder to save videos
         wandb_log (bool): Whether to log videos to wandb
-        n_bins (int): Number of discrete action bins for continuous environments
+        n_bins (int): Number of discrete actions
     """
     # Create video folder if it doesn't exist
     os.makedirs(video_folder, exist_ok=True)
@@ -29,7 +29,7 @@ def record_agent_video(agent, env_name, num_episodes=5, video_folder='videos', w
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        env = DiscretizedActionWrapper(env, n_bins=n_bins)
+        env = DiscretePendulumWrapper(env, num_actions=n_bins)
         print(f"⚠️  Continuous action space detected. Using discretization with {n_bins} actions.")
     
     # Wrap environment to record video
@@ -106,8 +106,10 @@ def main():
     parser.add_argument('--wandb-log', action='store_true', help='Log videos to wandb')
     parser.add_argument('--wandb-project', type=str, default='dqn-rl-assignment', help='Wandb project name')
     parser.add_argument('--double-dqn', action='store_true', help='Model was trained with Double DQN')
-    parser.add_argument('--n-bins', type=int, default=11,
-                       help='Number of discrete action bins for continuous environments')
+    parser.add_argument('--n-bins', type=int, default=5,
+                       help='Number of discrete actions')
+    parser.add_argument('--hidden-dim', type=int, default=128,
+                       help='Hidden dimension (must match training)')
     
     args = parser.parse_args()
     
@@ -125,7 +127,7 @@ def main():
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        env = DiscretizedActionWrapper(env, n_bins=args.n_bins)
+        env = DiscretePendulumWrapper(env, num_actions=args.n_bins)
         print(f"⚠️  Continuous action space detected. Using discretization with {args.n_bins} actions.")
     
     state_dim = env.observation_space.shape[0]
@@ -149,8 +151,7 @@ def main():
     # Adjust hidden_dim for specific environments
     if args.env == 'MountainCar-v0':
         config['hidden_dim'] = 256
-    elif args.env == 'Pendulum-v1':
-        config['hidden_dim'] = 256  # Pendulum may benefit from larger network
+
     
     # Create agent and load model
     agent = DQNAgent(state_dim, action_dim, config)
