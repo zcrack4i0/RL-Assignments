@@ -6,7 +6,7 @@ import argparse
 from dqn_agent import DQNAgent
 from gymnasium.wrappers import RecordVideo
 from gymnasium import spaces
-from discretize_wrapper import DiscretizedActionWrapper
+from pendulum_wrapper import DiscretePendulumWrapper, make_pendulum
 import os
 
 def train_dqn(config):
@@ -33,8 +33,8 @@ def train_dqn(config):
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        n_bins = config.get('n_bins', 11)  # Default 11 bins for Pendulum
-        env = DiscretizedActionWrapper(env, n_bins=n_bins)
+        n_bins = config.get('n_bins', 5)  # Default 5 bins
+        env = DiscretePendulumWrapper(env, num_actions=n_bins)
         print(f"⚠️  Continuous action space detected. Discretizing into {n_bins} actions.")
     
     # Get state and action dimensions
@@ -142,7 +142,7 @@ def train_dqn(config):
     
     return agent
 
-def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=11, use_fine_control=False):
+def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=5):
     """
     Evaluate a trained agent.
     
@@ -151,7 +151,7 @@ def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=11, us
         env_name (str): Name of the environment
         num_episodes (int): Number of episodes to evaluate
         render (bool): Whether to render the environment
-        n_bins (int): Number of discrete action bins for continuous environments
+        n_bins (int): Number of discrete actions
         
     Returns:
         float: Average reward over evaluation episodes
@@ -161,9 +161,8 @@ def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=11, us
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        env = DiscretizedActionWrapper(env, n_bins=n_bins, use_fine_control=use_fine_control)
-        control_type = "fine (non-uniform)" if use_fine_control else "uniform"
-        print(f"⚠️  Continuous action space detected. Using discretization with {n_bins} actions ({control_type}).")
+        env = DiscretePendulumWrapper(env, num_actions=n_bins)
+        print(f"⚠️  Continuous action space detected. Using discretization with {n_bins} actions.")
     
     episode_rewards = []
     
@@ -208,8 +207,7 @@ def main():
     parser.add_argument('--double-dqn', action='store_true', help='Use Double DQN instead of standard DQN')
     parser.add_argument('--evaluate', action='store_true', help='Evaluate trained agent')
     parser.add_argument('--load-model', type=str, default=None, help='Path to load model for evaluation')
-    parser.add_argument('--n-bins', type=int, default=11, help='Number of discrete action bins for continuous environments')
-    parser.add_argument('--fine-control', action='store_true', help='Use non-uniform bins with more precision near zero (for Pendulum)')
+    parser.add_argument('--n-bins', type=int, default=5, help='Number of discrete actions')
     
     args = parser.parse_args()
     
@@ -233,7 +231,6 @@ def main():
         'save_freq': 100,
         'solved_threshold': 195,  # For CartPole-v1
         'n_bins': args.n_bins,  # For continuous action space discretization
-        'use_fine_control': args.fine_control,  # Use fine control discretization
     }
     
     # Disable wandb if requested
@@ -260,11 +257,9 @@ def main():
         # Check if action space is continuous and needs discretization
         needs_discretization = isinstance(env.action_space, spaces.Box)
         if needs_discretization:
-            n_bins = config.get('n_bins', 11)
-            use_fine_control = config.get('use_fine_control', False)
-            env = DiscretizedActionWrapper(env, n_bins=n_bins, use_fine_control=use_fine_control)
-            control_type = "fine (non-uniform)" if use_fine_control else "uniform"
-            print(f"⚠️  Continuous action space detected. Discretizing into {n_bins} actions ({control_type}).")
+            n_bins = config.get('n_bins', 5)
+            env = DiscretePendulumWrapper(env, num_actions=n_bins)
+            print(f"⚠️  Continuous action space detected. Discretizing into {n_bins} actions.")
         state_dim = env.observation_space.shape[0]
         action_dim = env.action_space.n
         env.close()
@@ -273,7 +268,7 @@ def main():
         agent.load(args.load_model)
         print(f"Loaded model from {args.load_model}")
         
-        evaluate_agent(agent, config['env_name'], num_episodes=10, render=True)
+        evaluate_agent(agent, config['env_name'], num_episodes=10, render=True, n_bins=config.get('n_bins', 5))
     else:
         # Training mode
         print("Starting training...")
@@ -281,7 +276,7 @@ def main():
         
         # Evaluate the trained agent
         print("\nEvaluating trained agent...")
-        evaluate_agent(agent, config['env_name'], num_episodes=10, render=False, n_bins=config.get('n_bins', 11), use_fine_control=config.get('use_fine_control', False))
+        evaluate_agent(agent, config['env_name'], num_episodes=10, render=False, n_bins=config.get('n_bins', 5))
 
 if __name__ == '__main__':
     main()
