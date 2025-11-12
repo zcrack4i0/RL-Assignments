@@ -129,13 +129,14 @@ class DQNAgent:
             else:
                 # Standard DQN: use target network for both selection and evaluation
                 next_q_values = self.target_net(next_states).max(1)[0]
-            
+
+            # Bellman equation
             target_q_values = rewards + (1 - dones) * self.gamma * next_q_values
         
         # Compute loss
         loss = self.loss_fn(current_q_values, target_q_values)
         
-        # Optimize the model
+        # Optimize the model using backpropagation using Mean Squared Error loss
         self.optimizer.zero_grad()
         loss.backward()
         # Gradient clipping for stability
@@ -145,6 +146,7 @@ class DQNAgent:
         # Increment step count
         self.step_count += 1
         
+        #this stops the target network from being updated every time and updats it in order to catch up with the policy network
         # Update target network periodically
         if self.step_count % self.target_update_freq == 0:
             self.update_target_network()
