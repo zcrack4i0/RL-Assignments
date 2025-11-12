@@ -142,7 +142,7 @@ def train_dqn(config):
     
     return agent
 
-def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=11):
+def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=11, use_fine_control=False):
     """
     Evaluate a trained agent.
     
@@ -161,8 +161,9 @@ def evaluate_agent(agent, env_name, num_episodes=10, render=False, n_bins=11):
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        env = DiscretizedActionWrapper(env, n_bins=n_bins)
-        print(f"⚠️  Continuous action space detected. Using discretization with {n_bins} actions.")
+        env = DiscretizedActionWrapper(env, n_bins=n_bins, use_fine_control=use_fine_control)
+        control_type = "fine (non-uniform)" if use_fine_control else "uniform"
+        print(f"⚠️  Continuous action space detected. Using discretization with {n_bins} actions ({control_type}).")
     
     episode_rewards = []
     
@@ -208,6 +209,7 @@ def main():
     parser.add_argument('--evaluate', action='store_true', help='Evaluate trained agent')
     parser.add_argument('--load-model', type=str, default=None, help='Path to load model for evaluation')
     parser.add_argument('--n-bins', type=int, default=11, help='Number of discrete action bins for continuous environments')
+    parser.add_argument('--fine-control', action='store_true', help='Use non-uniform bins with more precision near zero (for Pendulum)')
     
     args = parser.parse_args()
     
@@ -231,6 +233,7 @@ def main():
         'save_freq': 100,
         'solved_threshold': 195,  # For CartPole-v1
         'n_bins': args.n_bins,  # For continuous action space discretization
+        'use_fine_control': args.fine_control,  # Use fine control discretization
     }
     
     # Disable wandb if requested
@@ -258,8 +261,10 @@ def main():
         needs_discretization = isinstance(env.action_space, spaces.Box)
         if needs_discretization:
             n_bins = config.get('n_bins', 11)
-            env = DiscretizedActionWrapper(env, n_bins=n_bins)
-            print(f"⚠️  Continuous action space detected. Discretizing into {n_bins} actions.")
+            use_fine_control = config.get('use_fine_control', False)
+            env = DiscretizedActionWrapper(env, n_bins=n_bins, use_fine_control=use_fine_control)
+            control_type = "fine (non-uniform)" if use_fine_control else "uniform"
+            print(f"⚠️  Continuous action space detected. Discretizing into {n_bins} actions ({control_type}).")
         state_dim = env.observation_space.shape[0]
         action_dim = env.action_space.n
         env.close()
@@ -276,7 +281,7 @@ def main():
         
         # Evaluate the trained agent
         print("\nEvaluating trained agent...")
-        evaluate_agent(agent, config['env_name'], num_episodes=10, render=False, n_bins=config.get('n_bins', 11))
+        evaluate_agent(agent, config['env_name'], num_episodes=10, render=False, n_bins=config.get('n_bins', 11), use_fine_control=config.get('use_fine_control', False))
 
 if __name__ == '__main__':
     main()

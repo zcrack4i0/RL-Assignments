@@ -6,6 +6,7 @@ This allows DQN (which requires discrete actions) to work with continuous action
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
+import math
 
 
 class DiscretizedActionWrapper(gym.ActionWrapper):
@@ -16,11 +17,13 @@ class DiscretizedActionWrapper(gym.ActionWrapper):
     This wrapper creates n_bins evenly spaced discrete actions.
     """
     
-    def __init__(self, env, n_bins=11):
+    def __init__(self, env, n_bins=11, use_fine_control=False):
         """
         Args:
             env: The gymnasium environment to wrap
             n_bins: Number of discrete actions to create (default: 11 for Pendulum)
+            use_fine_control: If True, use non-uniform bins with more precision near zero
+                             (better for tasks requiring fine control like Pendulum)
         """
         super().__init__(env)
         
@@ -39,12 +42,33 @@ class DiscretizedActionWrapper(gym.ActionWrapper):
         # Create action bins - evenly spaced values between low and high
         # For multi-dimensional actions, create bins for each dimension
         if self.action_dim == 1:
-            # Single dimension: create linear bins
-            self.action_bins = np.linspace(
-                self.action_low[0], 
-                self.action_high[0], 
-                n_bins
-            )
+            if use_fine_control:
+                # Non-uniform bins: more precision near zero for fine control
+                # Use a tanh-like distribution to concentrate bins near zero
+                # This is better for Pendulum where small corrections are crucial
+                half_bins = n_bins // 2
+                if n_bins % 2 == 1:
+                    # Odd number: include zero exactly
+                    # Create symmetric bins around zero
+                    # Use arctanh to create non-uniform spacing
+                    x = np.linspace(-0.99, 0.99, half_bins)
+                    # Map to action range with more density near zero
+                    positive_bins = np.tanh(x) * self.action_high[0]
+                    negative_bins = -positive_bins[::-1]
+                    self.action_bins = np.concatenate([negative_bins, [0.0], positive_bins])
+                else:
+                    # Even number: symmetric without exact zero
+                    x = np.linspace(-0.99, 0.99, n_bins)
+                    self.action_bins = np.tanh(x) * self.action_high[0]
+                # Sort to ensure proper ordering
+                self.action_bins = np.sort(self.action_bins)
+            else:
+                # Single dimension: create linear bins (evenly spaced)
+                self.action_bins = np.linspace(
+                    self.action_low[0], 
+                    self.action_high[0], 
+                    n_bins
+                )
         else:
             # Multi-dimensional: create bins for each dimension
             self.action_bins = []
