@@ -11,7 +11,7 @@ import time
 import argparse
 import os
 from dqn_agent import DQNAgent
-from discretize_wrapper import DiscretizedActionWrapper
+from pendulum_wrapper import DiscretePendulumWrapper, make_pendulum
 import wandb
 
 def test_agent(agent, env_name, num_episodes=100, render=False, wandb_log=False, n_bins=11):
@@ -34,7 +34,7 @@ def test_agent(agent, env_name, num_episodes=100, render=False, wandb_log=False,
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        env = DiscretizedActionWrapper(env, n_bins=n_bins)
+        env = DiscretePendulumWrapper(env, n_bins=n_bins)
         print(f"⚠️  Continuous action space detected. Using discretization with {n_bins} actions.")
     
     episode_rewards = []
@@ -192,7 +192,7 @@ def main():
     # Check if action space is continuous and needs discretization
     needs_discretization = isinstance(env.action_space, spaces.Box)
     if needs_discretization:
-        env = DiscretizedActionWrapper(env, n_bins=args.n_bins)
+        env = DiscretePendulumWrapper(env, n_bins=args.n_bins)
         print(f"⚠️  Continuous action space detected. Using discretization with {args.n_bins} actions.")
     
     state_dim = env.observation_space.shape[0]
