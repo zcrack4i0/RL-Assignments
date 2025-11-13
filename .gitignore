@@ -44,9 +44,9 @@ env/
 .env.local
 
 # Model checkpoints
-models/
-*.pth
-*.pt
+# models/
+# *.pth
+# *.pt
 
 
 
