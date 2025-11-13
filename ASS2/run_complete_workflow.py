@@ -49,7 +49,7 @@ def main():
         cmd = [
             sys.executable, 'train.py',
             '--env', 'CartPole-v1',
-            '--double-dqn',
+            
             '--episodes', '500',
             '--save-dir', 'models/cartpole_v1',
             '--wandb-project', 'dqn-cartpole'
@@ -64,7 +64,7 @@ def main():
         cmd = [
             sys.executable, 'train.py',
             '--env', 'Acrobot-v1',
-            '--double-dqn',
+            
             '--episodes', '800',
             '--epsilon-decay', '0.997',
             '--buffer-size', '15000',
@@ -81,7 +81,7 @@ def main():
         cmd = [
             sys.executable, 'train.py',
             '--env', 'MountainCar-v0',
-            '--double-dqn',
+            
             '--episodes', '1500',
             '--lr', '0.0005',
             '--epsilon-decay', '0.999',
@@ -101,7 +101,7 @@ def main():
         cmd = [
             sys.executable, 'train.py',
             '--env', 'Pendulum-v1',
-            '--double-dqn',
+            
             '--episodes', '1000',
             '--lr', '0.001',
             '--epsilon-decay', '0.998',
@@ -146,7 +146,7 @@ def main():
             '--env', env_name,
             '--model-path', model_path,
             '--num-episodes', '100',
-            '--double-dqn',
+            
             '--wandb',
             '--wandb-project', 'dqn-testing'
         ]
@@ -190,7 +190,7 @@ def main():
             '--env', env_name,
             '--num-episodes', '5',
             '--video-folder', video_folder,
-            '--double-dqn',
+            
             '--wandb-log',
             '--wandb-project', 'dqn-videos'
         ]
