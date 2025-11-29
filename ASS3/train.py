@@ -44,7 +44,7 @@ def get_env_dims(env):
 # --- PHASE 1: TRAINING & OPTIMIZATION ---
 def train_and_validate(model_type, env_name, config):
     run_name = f"TRAIN_{model_type}_{env_name}_lr{config['learning_rate']}_bs{config['batch_size']}"
-    wandb.init(project="CMPS458-Assignment3", config=config, reinit=True, name=run_name, group="optimization")
+    wandb.init(project="CMPS458-Assignment3", config=config, reinit=True, name=run_name, group="optimization",mode="offline")
     
     env = make_env(env_name, model_type)
     state_dim, action_dim, is_continuous = get_env_dims(env)
@@ -114,14 +114,14 @@ def train_and_validate(model_type, env_name, config):
 # --- PHASE 2: FINAL TESTING ---
 def test_best_model(model_type, env_name, config, model_path):
     run_name = f"TEST_{model_type}_{env_name}_BEST"
-    wandb.init(project="CMPS458-Assignment3", config=config, reinit=True, name=run_name, group="final_testing")
+    wandb.init(project="CMPS458-Assignment3", config=config, reinit=True, name=run_name, group="final_testing",mode="offline")
     
     print(f"--- Starting Final Test: {model_type} on {env_name} ---")
     
     # 1. Setup Env & Agent
     # [cite: 18] RecordVideo Wrapper
     env = make_env(env_name, model_type, render_mode="rgb_array")
-    env = RecordVideo(env, video_folder=f"./videos/{model_type}_{env_name}", episode_trigger=lambda x: x % 20 == 0)
+    env = RecordVideo(env, video_folder=f"./videos/{model_type}_{env_name}", episode_trigger=lambda x: x % 19 == 0)
     
     state_dim, action_dim, is_continuous = get_env_dims(env)
     
@@ -174,7 +174,7 @@ def test_best_model(model_type, env_name, config, model_path):
 # --- MAIN EXECUTION ---
 if __name__ == "__main__":
     environments = ["CartPole-v1", "Acrobot-v1", "MountainCar-v0", "Pendulum-v1"]
-    models = ["SAC", "PPO", "A2C"]
+    models = [ "PPO", "A2C"]
     
     # Generate configs
     keys, values = zip(*hyperparams.items())
@@ -214,6 +214,7 @@ if __name__ == "__main__":
                         
                 except Exception as e:
                     print(f"   !!! Error with config {config}: {e}")
+                    
 
     # Save Registry to JSON for safety
     with open("best_configs/final_best_registry.json", "w") as f:
