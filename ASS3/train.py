@@ -174,7 +174,7 @@ def test_best_model(model_type, env_name, config, model_path):
 # --- MAIN EXECUTION ---
 if __name__ == "__main__":
     environments = ["CartPole-v1", "Acrobot-v1", "MountainCar-v0", "Pendulum-v1"]
-    models = [ "PPO", "A2C"]
+    models = ["PPO", "A2C","SAC"]
     
     # Generate configs
     keys, values = zip(*hyperparams.items())
@@ -214,7 +214,6 @@ if __name__ == "__main__":
                         
                 except Exception as e:
                     print(f"   !!! Error with config {config}: {e}")
-                    
 
     # Save Registry to JSON for safety
     with open("best_configs/final_best_registry.json", "w") as f:
