@@ -11,6 +11,7 @@ from PPO import PPOAgent
 from Actor_critic import A2CAgent
 import numpy as np
 import argparse
+import random
 
 # Ensure directories exist
 os.makedirs("saved_models", exist_ok=True)
@@ -21,11 +22,11 @@ os.makedirs("videos", exist_ok=True)
 TUNING_STRATEGY = "sequential"  # Options: "grid", "random", "sequential"
 RANDOM_SAMPLES = 12  # Number of random samples if using random strategy
 ENABLE_EARLY_STOPPING = True  # Prune bad runs early
-EARLY_STOP_EPISODE = 50  # Check performance at this episode
+EARLY_STOP_EPISODE = 75  # Check performance at this episode
 EARLY_STOP_THRESHOLDS = {  # Minimum reward to continue
-    "CartPole-v1": 50,
-    "Acrobot-v1": -400,
-    "MountainCar-v0": -180,
+    "CartPole-v1": 100,  # Increased from 50 - should reach 100+ by episode 50 if learning
+    "Acrobot-v1": -350,
+    "MountainCar-v0": -199,
     "Pendulum-v1": -1200,
 }
 
@@ -213,12 +214,14 @@ def train_and_validate(model_type, env_name, config):
         # Early stopping check
         if ENABLE_EARLY_STOPPING and episode == EARLY_STOP_EPISODE:
             threshold = EARLY_STOP_THRESHOLDS.get(env_name, -float('inf'))
-            recent_avg = np.mean(episode_rewards[-10:])
+            recent_avg = np.mean(episode_rewards[-min(20, len(episode_rewards)):])
             if recent_avg < threshold:
                 print(f"      ⚠ EARLY STOP at episode {episode}: Avg reward {recent_avg:.2f} < threshold {threshold}")
                 early_stopped = True
-                wandb.log({"early_stopped": 1, "stop_episode": episode})
+                wandb.log({"early_stopped": 1, "stop_episode": episode, "stop_avg_reward": recent_avg})
                 break
+            else:
+                print(f"      ✓ Passed early stop check: Avg reward {recent_avg:.2f} >= threshold {threshold}")
         
         # Log metrics to wandb
         log_dict = {
