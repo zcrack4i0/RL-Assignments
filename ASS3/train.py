@@ -408,7 +408,7 @@ if __name__ == "__main__":
 
             for config in configurations:
                 try:
-                    print(f"   Testing config: lr={config['learning_rate']}, gamma={config['gamma']}, bs={config['batch_size']}, buffer={config['buffer_size']}")
+                    print(f"   Testing config: lr={config['learning_rate']}, gamma={config['gamma']}, bs={config['batch_size']}, buffer={config['buffer_size']}, decay={config['decay_rate']}")
                     score, agent = train_and_validate(model, env_name, config)
                     print(f"   ✓ Score: {score:.2f}")
                     
