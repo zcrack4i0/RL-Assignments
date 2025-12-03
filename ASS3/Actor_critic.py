@@ -51,6 +51,7 @@ class A2CAgent:
         self.gamma = config.get('gamma', 0.99)
         self.lr = config.get('learning_rate', 1e-3)
         self.entropy_beta = config.get('entropy_beta', 0.01) # Hyperparam to prevent premature convergence
+        self.entropy_coef = config.get('entropy_coef', 0.01)  # Alias for compatibility with decay
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         self.network = A2CNetwork(state_dim, action_dim, is_continuous).to(self.device)
@@ -88,6 +89,10 @@ class A2CAgent:
         self.masks.append(1 - done)
 
     def update(self):
+        # Check if buffer has data
+        if len(self.rewards) == 0:
+            return 0.0
+            
         # Calculate Returns (Discounted Cumulative Rewards)
         # We process rewards in reverse to calculate the return G_t at each step
         returns = []
@@ -120,9 +125,9 @@ class A2CAgent:
         actor_loss = -(log_probs * advantage.detach()).mean()
         critic_loss = advantage.pow(2).mean()
         
-        # Total Loss = Actor + Critic - Entropy * beta
-        # We subtract entropy to Maximize it (minimize negative entropy)
-        loss = actor_loss + 0.5 * critic_loss - self.entropy_beta * entropies
+        # Total Loss = Actor + Critic - Entropy * coef
+        # Use entropy_coef which can be decayed over time
+        loss = actor_loss + 0.5 * critic_loss - self.entropy_coef * entropies
         
         # Optimize
         self.optimizer.zero_grad()

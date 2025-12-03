@@ -94,6 +94,7 @@ class PPOAgent:
         self.gamma = config.get('gamma', 0.99)
         self.eps_clip = config.get('eps_clip', 0.2)
         self.K_epochs = config.get('K_epochs', 40)
+        self.entropy_coef = config.get('entropy_coef', 0.01)  # Entropy coefficient for exploration
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         self.buffer = PPOMemory()
@@ -125,6 +126,10 @@ class PPOAgent:
         self.buffer.is_terminals.append(done)
 
     def update(self):
+        # Check if buffer has data
+        if len(self.buffer.states) == 0:
+            return 0.0
+            
         # Convert buffer to tensor
         old_states = torch.squeeze(torch.stack(self.buffer.states, dim=0)).detach().to(self.device)
         old_actions = torch.squeeze(torch.stack(self.buffer.actions, dim=0)).detach().to(self.device)
@@ -152,7 +157,7 @@ class PPOAgent:
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * advantages
 
-            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values, rewards) - 0.01 * dist_entropy
+            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values, rewards) - self.entropy_coef * dist_entropy
 
             self.optimizer.zero_grad()
             loss.mean().backward()

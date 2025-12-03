@@ -109,11 +109,11 @@ class GaussianPolicy(nn.Module):
         normal = Normal(mean, std)
         x_t = normal.rsample()  # Reparameterization trick (mean + std * epsilon)
         y_t = torch.tanh(x_t)
-        action = y_t * self.action_scale + self.action_bias
+        action = y_t * self.action_scale.to(state.device) + self.action_bias.to(state.device)
         
         # Enforcing Action Bound
         log_prob = normal.log_prob(x_t)
-        log_prob -= torch.log(self.action_scale * (1 - y_t.pow(2)) + 1e-6)
+        log_prob -= torch.log(self.action_scale.to(state.device) * (1 - y_t.pow(2)) + 1e-6)
         log_prob = log_prob.sum(1, keepdim=True)
-        mean = torch.tanh(mean) * self.action_scale + self.action_bias
+        mean = torch.tanh(mean) * self.action_scale.to(state.device) + self.action_bias.to(state.device)
         return action, log_prob, mean
