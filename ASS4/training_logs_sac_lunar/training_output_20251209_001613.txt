@@ -1,0 +1,574 @@
+Output is being saved to: training_logs/training_output_20251209_001613.txt
+
+
+======================================================================
+SAC Training on Box2D Environments (Continuous Actions)
+======================================================================
+
+
+######################################################################
+# Environment: LunarLander-v3
+######################################################################
+
+
+======================================================================
+Configuration 1/5
+======================================================================
+
+======================================================================
+Training SAC on LunarLander-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Vector observation space: 8 dimensions
+Action dimension: 2
+Action space: Box(-1.0, 1.0, (2,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0003
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 256
+  buffer_size: 1000000
+
+Agent initialized on device: cpu
+
+WandB run: SAC_LunarLander-v3_lr0.0003_bs256_gamma0.99
+WandB project: SAC-Box2D-Training
+
+Starting training...
+----------------------------------------------------------------------
+Episode    1/1000 | Reward: -318.26 | Length:  171 | Avg Reward (last 50): -318.26 | Avg Loss: 0.0000 | Buffer: 171
+Episode   50/1000 | Reward:  -36.76 | Length:  310 | Avg Reward (last 50): -165.30 | Avg Loss: 31.1442 | Buffer: 24268
+Episode  100/1000 | Reward:  -32.90 | Length: 1000 | Avg Reward (last 50):  -76.54 | Avg Loss: 10.7005 | Buffer: 56956
+Episode  150/1000 | Reward:  -17.64 | Length: 1000 | Avg Reward (last 50): -102.53 | Avg Loss: 10.1190 | Buffer: 95777
+Episode  200/1000 | Reward:   17.78 | Length: 1000 | Avg Reward (last 50):  -33.19 | Avg Loss: 7.2463 | Buffer: 145050
+Episode  250/1000 | Reward:   29.97 | Length: 1000 | Avg Reward (last 50):   -3.58 | Avg Loss: 5.0941 | Buffer: 195050
+Episode  300/1000 | Reward:    4.98 | Length: 1000 | Avg Reward (last 50):    7.36 | Avg Loss: 3.8364 | Buffer: 245050
+Episode  350/1000 | Reward:  -15.86 | Length: 1000 | Avg Reward (last 50):   -1.10 | Avg Loss: 3.3728 | Buffer: 293395
+Episode  400/1000 | Reward:    6.36 | Length: 1000 | Avg Reward (last 50):   12.77 | Avg Loss: 2.9498 | Buffer: 343395
+Episode  450/1000 | Reward:   22.08 | Length: 1000 | Avg Reward (last 50):    6.16 | Avg Loss: 2.6197 | Buffer: 393395
+Episode  500/1000 | Reward:  258.97 | Length:  195 | Avg Reward (last 50):  119.41 | Avg Loss: 4.3023 | Buffer: 423530
+Episode  550/1000 | Reward:  258.63 | Length:  280 | Avg Reward (last 50):  229.55 | Avg Loss: 10.8752 | Buffer: 439684
+Episode  600/1000 | Reward:  257.51 | Length:  221 | Avg Reward (last 50):  236.09 | Avg Loss: 13.2891 | Buffer: 455129
+Episode  650/1000 | Reward:  180.48 | Length:  417 | Avg Reward (last 50):  231.50 | Avg Loss: 14.7276 | Buffer: 471884
+Episode  700/1000 | Reward:  308.60 | Length:  284 | Avg Reward (last 50):  257.32 | Avg Loss: 15.2626 | Buffer: 486556
+Episode  750/1000 | Reward:  248.66 | Length:  222 | Avg Reward (last 50):  252.37 | Avg Loss: 15.6266 | Buffer: 500690
+Episode  800/1000 | Reward:  270.77 | Length:  192 | Avg Reward (last 50):  271.16 | Avg Loss: 15.7027 | Buffer: 511877
+Episode  850/1000 | Reward:  231.46 | Length:  181 | Avg Reward (last 50):  254.99 | Avg Loss: 15.3326 | Buffer: 522853
+Episode  900/1000 | Reward: -111.66 | Length:  364 | Avg Reward (last 50):  243.12 | Avg Loss: 15.7149 | Buffer: 535771
+Episode  950/1000 | Reward:  255.33 | Length:  200 | Avg Reward (last 50):  280.51 | Avg Loss: 16.4584 | Buffer: 546151
+Episode 1000/1000 | Reward:  295.20 | Length:  207 | Avg Reward (last 50):  278.77 | Avg Loss: 15.4616 | Buffer: 556158
+----------------------------------------------------------------------
+
+Training Complete!
+Total Episodes: 1000
+Average Reward: 114.94 ± 163.85
+Best Reward: 319.21 (Episode 946)
+Average Episode Length: 556.16
+Final Buffer Size: 556158
+
+Final model saved to: saved_models/sac_LunarLander-v3_final.pth
+Best model saved to: saved_models/sac_LunarLander-v3_best.pth
+Training statistics saved to: training_logs/sac_LunarLander-v3_20251209_025915.json
+
+======================================================================
+Testing SAC agent on LunarLander-v3
+======================================================================
+
+Test Episode   1: Reward =  279.27, Length =  195
+Test Episode   2: Reward =  303.77, Length =  216
+Test Episode   3: Reward =  276.74, Length =  238
+Test Episode   4: Reward =  286.16, Length =  237
+Test Episode   5: Reward =  260.70, Length =  191
+Test Episode   6: Reward =  263.76, Length =  219
+Test Episode   7: Reward =  273.15, Length =  219
+Test Episode   8: Reward =  230.23, Length =  191
+Test Episode   9: Reward =  284.35, Length =  197
+Test Episode  10: Reward =  236.12, Length =  201
+----------------------------------------------------------------------
+Test Results:
+  Average Reward: 269.43 ± 21.45
+  Best Reward: 303.77
+  Average Length: 210.40
+
+✓ Configuration 1 completed successfully!
+
+======================================================================
+Configuration 2/5
+======================================================================
+
+======================================================================
+Training SAC on LunarLander-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Vector observation space: 8 dimensions
+Action dimension: 2
+Action space: Box(-1.0, 1.0, (2,), float32)
+
+Hyperparameters:
+  learning_rate: 0.001
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 128
+  buffer_size: 500000
+
+Agent initialized on device: cpu
+
+WandB run: SAC_LunarLander-v3_lr0.001_bs128_gamma0.99
+WandB project: SAC-Box2D-Training
+
+Starting training...
+----------------------------------------------------------------------
+Episode    1/1000 | Reward: -464.14 | Length:   83 | Avg Reward (last 50): -464.14 | Avg Loss: 0.0000 | Buffer: 83
+Episode   50/1000 | Reward:  -71.45 | Length:  115 | Avg Reward (last 50): -134.30 | Avg Loss: 28.4505 | Buffer: 24783
+Episode  100/1000 | Reward:  -39.36 | Length: 1000 | Avg Reward (last 50):  -64.97 | Avg Loss: 13.6120 | Buffer: 65627
+Episode  150/1000 | Reward:  218.17 | Length:  418 | Avg Reward (last 50):    0.03 | Avg Loss: 6.9733 | Buffer: 107250
+Episode  200/1000 | Reward:  278.68 | Length:  392 | Avg Reward (last 50):  219.26 | Avg Loss: 14.0378 | Buffer: 123540
+Episode  250/1000 | Reward:  237.49 | Length:  194 | Avg Reward (last 50):  184.55 | Avg Loss: 15.9528 | Buffer: 139910
+Episode  300/1000 | Reward:  256.65 | Length:  221 | Avg Reward (last 50):  214.96 | Avg Loss: 18.1216 | Buffer: 157002
+Episode  350/1000 | Reward:  288.76 | Length:  174 | Avg Reward (last 50):  225.18 | Avg Loss: 20.0014 | Buffer: 168862
+Episode  400/1000 | Reward:  273.06 | Length:  218 | Avg Reward (last 50):  249.04 | Avg Loss: 21.1690 | Buffer: 180526
+Episode  450/1000 | Reward:  259.14 | Length:  166 | Avg Reward (last 50):  271.19 | Avg Loss: 21.0483 | Buffer: 191837
+Episode  500/1000 | Reward:  281.55 | Length:  210 | Avg Reward (last 50):  268.66 | Avg Loss: 20.2710 | Buffer: 203433
+Episode  550/1000 | Reward:  295.31 | Length:  245 | Avg Reward (last 50):  279.36 | Avg Loss: 19.7734 | Buffer: 214184
+Episode  600/1000 | Reward:  278.59 | Length:  157 | Avg Reward (last 50):  273.90 | Avg Loss: 19.4104 | Buffer: 225260
+Episode  650/1000 | Reward:  267.28 | Length:  158 | Avg Reward (last 50):  281.72 | Avg Loss: 19.4721 | Buffer: 235417
+Episode  700/1000 | Reward:  292.44 | Length:  169 | Avg Reward (last 50):  274.14 | Avg Loss: 19.0383 | Buffer: 246594
+Episode  750/1000 | Reward:  284.59 | Length:  185 | Avg Reward (last 50):  280.80 | Avg Loss: 17.8055 | Buffer: 256222
+Episode  800/1000 | Reward:  276.54 | Length:  152 | Avg Reward (last 50):  285.28 | Avg Loss: 17.6542 | Buffer: 265909
+Episode  850/1000 | Reward:  276.10 | Length:  151 | Avg Reward (last 50):  284.13 | Avg Loss: 16.9044 | Buffer: 275191
+Episode  900/1000 | Reward:  287.31 | Length:  226 | Avg Reward (last 50):  280.85 | Avg Loss: 15.8905 | Buffer: 284663
+Episode  950/1000 | Reward:  270.22 | Length:  260 | Avg Reward (last 50):  279.43 | Avg Loss: 16.6890 | Buffer: 294059
+Episode 1000/1000 | Reward:  281.81 | Length:  187 | Avg Reward (last 50):  275.40 | Avg Loss: 16.4388 | Buffer: 303787
+----------------------------------------------------------------------
+
+Training Complete!
+Total Episodes: 1000
+Average Reward: 211.43 ± 141.20
+Best Reward: 326.88 (Episode 754)
+Average Episode Length: 303.79
+Final Buffer Size: 303787
+
+Final model saved to: saved_models/sac_LunarLander-v3_final.pth
+Best model saved to: saved_models/sac_LunarLander-v3_best.pth
+Training statistics saved to: training_logs/sac_LunarLander-v3_20251209_041722.json
+
+======================================================================
+Testing SAC agent on LunarLander-v3
+======================================================================
+
+Test Episode   1: Reward =  291.41, Length =  224
+Test Episode   2: Reward =  246.74, Length =  158
+Test Episode   3: Reward =  308.53, Length =  206
+Test Episode   4: Reward =  273.39, Length =  183
+Test Episode   5: Reward =  294.45, Length =  148
+Test Episode   6: Reward =  260.27, Length =  155
+Test Episode   7: Reward =  297.90, Length =  252
+Test Episode   8: Reward =  278.05, Length =  143
+Test Episode   9: Reward =  313.09, Length =  195
+Test Episode  10: Reward =  290.89, Length =  194
+----------------------------------------------------------------------
+Test Results:
+  Average Reward: 285.47 ± 19.83
+  Best Reward: 313.09
+  Average Length: 185.80
+
+✓ Configuration 2 completed successfully!
+
+======================================================================
+Configuration 3/5
+======================================================================
+
+======================================================================
+Training SAC on LunarLander-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Vector observation space: 8 dimensions
+Action dimension: 2
+Action space: Box(-1.0, 1.0, (2,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0003
+  gamma: 0.995
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 256
+  buffer_size: 1000000
+
+Agent initialized on device: cpu
+
+WandB run: SAC_LunarLander-v3_lr0.0003_bs256_gamma0.995
+WandB project: SAC-Box2D-Training
+
+Starting training...
+----------------------------------------------------------------------
+Episode    1/1000 | Reward: -104.03 | Length:  110 | Avg Reward (last 50): -104.03 | Avg Loss: 0.0000 | Buffer: 110
+Episode   50/1000 | Reward: -366.48 | Length:  221 | Avg Reward (last 50): -212.25 | Avg Loss: 47.8852 | Buffer: 21263
+Episode  100/1000 | Reward: -220.30 | Length:  968 | Avg Reward (last 50): -124.43 | Avg Loss: 29.1455 | Buffer: 36891
+Episode  150/1000 | Reward:  -84.53 | Length:  803 | Avg Reward (last 50):  -69.93 | Avg Loss: 26.6977 | Buffer: 73666
+Episode  200/1000 | Reward:  197.85 | Length:  529 | Avg Reward (last 50):   14.68 | Avg Loss: 17.2197 | Buffer: 120754
+Episode  250/1000 | Reward:  236.89 | Length:  517 | Avg Reward (last 50):  172.87 | Avg Loss: 20.4225 | Buffer: 145904
+Episode  300/1000 | Reward: -532.07 | Length:  831 | Avg Reward (last 50):  195.89 | Avg Loss: 21.3850 | Buffer: 167022
+Episode  350/1000 | Reward:  275.90 | Length:  319 | Avg Reward (last 50):  183.42 | Avg Loss: 21.2041 | Buffer: 186937
+Episode  400/1000 | Reward:  -41.58 | Length: 1000 | Avg Reward (last 50):  208.06 | Avg Loss: 21.2660 | Buffer: 207515
+Episode  450/1000 | Reward:  266.88 | Length:  216 | Avg Reward (last 50):  240.60 | Avg Loss: 20.9263 | Buffer: 225224
+Episode  500/1000 | Reward:  295.76 | Length:  505 | Avg Reward (last 50):  213.82 | Avg Loss: 19.6717 | Buffer: 247358
+Episode  550/1000 | Reward:  284.12 | Length:  184 | Avg Reward (last 50):  261.82 | Avg Loss: 18.5563 | Buffer: 262441
+Episode  600/1000 | Reward:  298.19 | Length:  345 | Avg Reward (last 50):  249.94 | Avg Loss: 17.3155 | Buffer: 279609
+Episode  650/1000 | Reward:  272.08 | Length:  265 | Avg Reward (last 50):  273.14 | Avg Loss: 17.3512 | Buffer: 292125
+Episode  700/1000 | Reward:  309.88 | Length:  224 | Avg Reward (last 50):  277.76 | Avg Loss: 16.4916 | Buffer: 303822
+Episode  750/1000 | Reward:  267.62 | Length:  202 | Avg Reward (last 50):  279.17 | Avg Loss: 16.5359 | Buffer: 314519
+Episode  800/1000 | Reward:  -21.76 | Length: 1000 | Avg Reward (last 50):  270.48 | Avg Loss: 16.5465 | Buffer: 325438
+Episode  850/1000 | Reward:  265.14 | Length:  242 | Avg Reward (last 50):  274.78 | Avg Loss: 15.9656 | Buffer: 337382
+Episode  900/1000 | Reward:  247.01 | Length:  298 | Avg Reward (last 50):  268.64 | Avg Loss: 15.6196 | Buffer: 351253
+Episode  950/1000 | Reward:  281.01 | Length:  254 | Avg Reward (last 50):  278.08 | Avg Loss: 15.7817 | Buffer: 362961
+Episode 1000/1000 | Reward:  241.97 | Length:  420 | Avg Reward (last 50):  240.56 | Avg Loss: 16.6516 | Buffer: 379727
+----------------------------------------------------------------------
+
+Training Complete!
+Total Episodes: 1000
+Average Reward: 174.85 ± 172.96
+Best Reward: 317.83 (Episode 912)
+Average Episode Length: 379.73
+Final Buffer Size: 379727
+
+Final model saved to: saved_models/sac_LunarLander-v3_final.pth
+Best model saved to: saved_models/sac_LunarLander-v3_best.pth
+Training statistics saved to: training_logs/sac_LunarLander-v3_20251209_055900.json
+
+======================================================================
+Testing SAC agent on LunarLander-v3
+======================================================================
+
+Test Episode   1: Reward =  193.66, Length =  498
+Test Episode   2: Reward =  220.94, Length =  401
+Test Episode   3: Reward =  251.47, Length =  346
+Test Episode   4: Reward =  228.68, Length =  493
+Test Episode   5: Reward =  231.42, Length =  469
+Test Episode   6: Reward =  214.96, Length =  474
+Test Episode   7: Reward =  254.38, Length =  499
+Test Episode   8: Reward =  230.12, Length =  456
+Test Episode   9: Reward =  236.37, Length =  549
+Test Episode  10: Reward =  281.77, Length =  283
+----------------------------------------------------------------------
+Test Results:
+  Average Reward: 234.38 ± 22.84
+  Best Reward: 281.77
+  Average Length: 446.80
+
+✓ Configuration 3 completed successfully!
+
+======================================================================
+Configuration 4/5
+======================================================================
+
+======================================================================
+Training SAC on LunarLander-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Vector observation space: 8 dimensions
+Action dimension: 2
+Action space: Box(-1.0, 1.0, (2,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0001
+  gamma: 0.99
+  tau: 0.01
+  alpha: 0.2
+  batch_size: 512
+  buffer_size: 2000000
+
+Agent initialized on device: cpu
+
+WandB run: SAC_LunarLander-v3_lr0.0001_bs512_gamma0.99
+WandB project: SAC-Box2D-Training
+
+Starting training...
+----------------------------------------------------------------------
+Episode    1/1000 | Reward: -379.87 | Length:  107 | Avg Reward (last 50): -379.87 | Avg Loss: 0.0000 | Buffer: 107
+Episode   50/1000 | Reward:  175.71 | Length:  699 | Avg Reward (last 50):  -52.72 | Avg Loss: 36.8001 | Buffer: 29888
+Episode  100/1000 | Reward:  244.66 | Length:  340 | Avg Reward (last 50):  166.25 | Avg Loss: 18.0751 | Buffer: 59478
+Episode  150/1000 | Reward:  -62.28 | Length:  219 | Avg Reward (last 50):  160.72 | Avg Loss: 20.4128 | Buffer: 77629
+Episode  200/1000 | Reward:  241.72 | Length:  387 | Avg Reward (last 50):  204.84 | Avg Loss: 20.3784 | Buffer: 99245
+Episode  250/1000 | Reward:  235.94 | Length:  400 | Avg Reward (last 50):  225.95 | Avg Loss: 19.2866 | Buffer: 114807
+Episode  300/1000 | Reward:  222.78 | Length:  334 | Avg Reward (last 50):  206.27 | Avg Loss: 19.0493 | Buffer: 133778
+Episode  350/1000 | Reward:  222.57 | Length:  556 | Avg Reward (last 50):  242.31 | Avg Loss: 18.1652 | Buffer: 152580
+Episode  400/1000 | Reward:  244.46 | Length:  201 | Avg Reward (last 50):  265.24 | Avg Loss: 16.1385 | Buffer: 166387
+Episode  450/1000 | Reward:  250.73 | Length:  251 | Avg Reward (last 50):  256.57 | Avg Loss: 16.0538 | Buffer: 181372
+Episode  500/1000 | Reward:  263.21 | Length:  267 | Avg Reward (last 50):  202.01 | Avg Loss: 16.2042 | Buffer: 197923
+Episode  550/1000 | Reward:  265.48 | Length:  514 | Avg Reward (last 50):  258.65 | Avg Loss: 17.6711 | Buffer: 212003
+Episode  600/1000 | Reward:  251.46 | Length:  304 | Avg Reward (last 50):  255.72 | Avg Loss: 16.7212 | Buffer: 225796
+Episode  650/1000 | Reward:  220.51 | Length:  358 | Avg Reward (last 50):  259.93 | Avg Loss: 16.0300 | Buffer: 240431
+Episode  700/1000 | Reward:  237.19 | Length:  574 | Avg Reward (last 50):  265.18 | Avg Loss: 15.5583 | Buffer: 254300
+Episode  750/1000 | Reward:  228.37 | Length:  219 | Avg Reward (last 50):  245.65 | Avg Loss: 15.6749 | Buffer: 268225
+Episode  800/1000 | Reward:  270.68 | Length:  308 | Avg Reward (last 50):  260.60 | Avg Loss: 16.0998 | Buffer: 281287
+Episode  850/1000 | Reward:  252.71 | Length:  200 | Avg Reward (last 50):  270.79 | Avg Loss: 15.2614 | Buffer: 293413
+Episode  900/1000 | Reward:  295.27 | Length:  257 | Avg Reward (last 50):  271.66 | Avg Loss: 14.8732 | Buffer: 305414
+Episode  950/1000 | Reward:  269.57 | Length:  217 | Avg Reward (last 50):  267.21 | Avg Loss: 14.2684 | Buffer: 317087
+Episode 1000/1000 | Reward:  285.34 | Length:  194 | Avg Reward (last 50):  269.08 | Avg Loss: 13.8213 | Buffer: 328269
+----------------------------------------------------------------------
+
+Training Complete!
+Total Episodes: 1000
+Average Reward: 225.09 ± 105.99
+Best Reward: 316.32 (Episode 931)
+Average Episode Length: 328.27
+Final Buffer Size: 328269
+
+Final model saved to: saved_models/sac_LunarLander-v3_final.pth
+Best model saved to: saved_models/sac_LunarLander-v3_best.pth
+Training statistics saved to: training_logs/sac_LunarLander-v3_20251209_074320.json
+
+======================================================================
+Testing SAC agent on LunarLander-v3
+======================================================================
+
+Test Episode   1: Reward =  286.25, Length =  288
+Test Episode   2: Reward =  278.73, Length =  253
+Test Episode   3: Reward =  301.04, Length =  260
+Test Episode   4: Reward =  308.50, Length =  252
+Test Episode   5: Reward =  272.86, Length =  214
+Test Episode   6: Reward =  263.29, Length =  237
+Test Episode   7: Reward =  259.62, Length =  234
+Test Episode   8: Reward =  295.14, Length =  253
+Test Episode   9: Reward =  269.12, Length =  201
+Test Episode  10: Reward =  273.66, Length =  243
+----------------------------------------------------------------------
+Test Results:
+  Average Reward: 280.82 ± 15.56
+  Best Reward: 308.50
+  Average Length: 243.50
+
+✓ Configuration 4 completed successfully!
+
+======================================================================
+Configuration 5/5
+======================================================================
+
+======================================================================
+Training SAC on LunarLander-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Vector observation space: 8 dimensions
+Action dimension: 2
+Action space: Box(-1.0, 1.0, (2,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0005
+  gamma: 0.98
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 128
+  buffer_size: 1000000
+
+Agent initialized on device: cpu
+
+WandB run: SAC_LunarLander-v3_lr0.0005_bs128_gamma0.98
+WandB project: SAC-Box2D-Training
+
+Starting training...
+----------------------------------------------------------------------
+Episode    1/1000 | Reward: -143.00 | Length:  148 | Avg Reward (last 50): -143.00 | Avg Loss: 4.8442 | Buffer: 148
+Episode   50/1000 | Reward:  164.24 | Length:  616 | Avg Reward (last 50):  -70.95 | Avg Loss: 19.1418 | Buffer: 28892
+Episode  100/1000 | Reward:   33.61 | Length: 1000 | Avg Reward (last 50):   15.85 | Avg Loss: 11.4543 | Buffer: 52382
+Episode  150/1000 | Reward:   -6.36 | Length:  415 | Avg Reward (last 50):   67.72 | Avg Loss: 12.7303 | Buffer: 83530
+Episode  200/1000 | Reward:  243.08 | Length:  365 | Avg Reward (last 50):  131.68 | Avg Loss: 12.7417 | Buffer: 114147
+Episode  250/1000 | Reward:  145.82 | Length:  526 | Avg Reward (last 50):  185.63 | Avg Loss: 12.4239 | Buffer: 138056
+Episode  300/1000 | Reward:  242.83 | Length:  332 | Avg Reward (last 50):  185.78 | Avg Loss: 12.9887 | Buffer: 160116
+Episode  350/1000 | Reward:  222.69 | Length:  532 | Avg Reward (last 50):  231.66 | Avg Loss: 13.5198 | Buffer: 178975
+Episode  400/1000 | Reward:  285.36 | Length:  247 | Avg Reward (last 50):  224.25 | Avg Loss: 13.5711 | Buffer: 197323
+Episode  450/1000 | Reward:  221.70 | Length:  408 | Avg Reward (last 50):  187.23 | Avg Loss: 14.2830 | Buffer: 216604
+Episode  500/1000 | Reward:  243.13 | Length:  443 | Avg Reward (last 50):  194.03 | Avg Loss: 14.4803 | Buffer: 233368
+Episode  550/1000 | Reward:   -3.52 | Length:  141 | Avg Reward (last 50):  243.81 | Avg Loss: 14.6166 | Buffer: 249011
+Episode  600/1000 | Reward:  267.12 | Length:  371 | Avg Reward (last 50):  222.30 | Avg Loss: 15.0058 | Buffer: 262319
+Episode  650/1000 | Reward:  242.31 | Length:  496 | Avg Reward (last 50):  192.37 | Avg Loss: 15.6558 | Buffer: 279937
+Episode  700/1000 | Reward:  243.79 | Length:  179 | Avg Reward (last 50):  221.75 | Avg Loss: 15.5243 | Buffer: 299006
+Episode  750/1000 | Reward:  245.11 | Length:  333 | Avg Reward (last 50):  227.09 | Avg Loss: 15.8392 | Buffer: 312523
+Episode  800/1000 | Reward:  256.01 | Length:  208 | Avg Reward (last 50):  246.24 | Avg Loss: 15.8042 | Buffer: 325466
+Episode  850/1000 | Reward:  282.54 | Length:  269 | Avg Reward (last 50):  246.80 | Avg Loss: 16.3356 | Buffer: 339223
+Episode  900/1000 | Reward:  278.17 | Length:  231 | Avg Reward (last 50):  241.06 | Avg Loss: 16.1620 | Buffer: 354577
+Episode  950/1000 | Reward:  243.79 | Length:  203 | Avg Reward (last 50):  240.10 | Avg Loss: 15.8704 | Buffer: 370650
+Episode 1000/1000 | Reward:  272.47 | Length:  354 | Avg Reward (last 50):  242.82 | Avg Loss: 15.8906 | Buffer: 386929
+----------------------------------------------------------------------
+
+Training Complete!
+Total Episodes: 1000
+Average Reward: 183.86 ± 131.25
+Best Reward: 306.12 (Episode 561)
+Average Episode Length: 386.93
+Final Buffer Size: 386929
+
+Final model saved to: saved_models/sac_LunarLander-v3_final.pth
+Best model saved to: saved_models/sac_LunarLander-v3_best.pth
+Training statistics saved to: training_logs/sac_LunarLander-v3_20251209_092125.json
+
+======================================================================
+Testing SAC agent on LunarLander-v3
+======================================================================
+
+Test Episode   1: Reward =  237.24, Length =  202
+Test Episode   2: Reward =  222.36, Length =  193
+Test Episode   3: Reward =  210.91, Length =  196
+Test Episode   4: Reward =  189.37, Length =  638
+Test Episode   5: Reward =  245.29, Length =  187
+Test Episode   6: Reward =  296.30, Length =  316
+Test Episode   7: Reward =  274.13, Length =  332
+Test Episode   8: Reward =  244.02, Length =  244
+Test Episode   9: Reward =  274.94, Length =  191
+Test Episode  10: Reward =  256.97, Length =  334
+----------------------------------------------------------------------
+Test Results:
+  Average Reward: 245.15 ± 30.58
+  Best Reward: 296.30
+  Average Length: 283.30
+
+✓ Configuration 5 completed successfully!
+
+
+######################################################################
+# Environment: CarRacing-v3
+######################################################################
+
+
+======================================================================
+Configuration 1/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0003
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 256
+  buffer_size: 1000000
+
+
+✗ Error with configuration 1: Unable to allocate 206. GiB for an array with shape (1000000, 27648) and data type float64
+
+======================================================================
+Configuration 2/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.001
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 128
+  buffer_size: 500000
+
+
+✗ Error with configuration 2: Unable to allocate 103. GiB for an array with shape (500000, 27648) and data type float64
+
+======================================================================
+Configuration 3/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0003
+  gamma: 0.995
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 256
+  buffer_size: 1000000
+
+
+✗ Error with configuration 3: Unable to allocate 206. GiB for an array with shape (1000000, 27648) and data type float64
+
+======================================================================
+Configuration 4/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0001
+  gamma: 0.99
+  tau: 0.01
+  alpha: 0.2
+  batch_size: 512
+  buffer_size: 2000000
+
+
+✗ Error with configuration 4: Unable to allocate 412. GiB for an array with shape (2000000, 27648) and data type float64
+
+======================================================================
+Configuration 5/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0005
+  gamma: 0.98
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 128
+  buffer_size: 1000000
+
+
+✗ Error with configuration 5: Unable to allocate 206. GiB for an array with shape (1000000, 27648) and data type float64
+
+
+All results saved to: training_logs/box2d_results_20251209_092154.json
+
+======================================================================
+TRAINING SUMMARY
+======================================================================
+
+LunarLander-v3:
+  config_1: Test Avg Reward = 269.43 ± 21.45
+  config_2: Test Avg Reward = 285.47 ± 19.83
+  config_3: Test Avg Reward = 234.38 ± 22.84
+  config_4: Test Avg Reward = 280.82 ± 15.56
+  config_5: Test Avg Reward = 245.15 ± 30.58
+
+CarRacing-v3:
+
+======================================================================
+All training complete! Check videos/ folder for recorded episodes.
+======================================================================
+

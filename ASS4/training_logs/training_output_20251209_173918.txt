@@ -1,0 +1,143 @@
+Output is being saved to: training_logs/training_output_20251209_173918.txt
+
+
+======================================================================
+SAC Training on Box2D Environments (Continuous Actions)
+======================================================================
+
+
+######################################################################
+# Environment: CarRacing-v3
+######################################################################
+
+
+======================================================================
+Configuration 1/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0003
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 256
+  buffer_size: 50000
+
+Using GPU: NVIDIA GeForce GTX 1650
+
+Agent initialized on device: cuda
+GPU: NVIDIA GeForce GTX 1650
+GPU Memory: 4.29 GB
+WandB run: SAC_CarRacing-v3_lr0.0003_bs256_gamma0.99
+WandB project: SAC-Box2D-Training
+
+Starting training...
+----------------------------------------------------------------------
+Episode    1/1000 | Reward:  -42.49 | Length: 1000 | Avg Reward (last 50):  -42.49 | Avg Loss: 41.3326 | Buffer: 1000
+  Sample Action: [-0.66166115  0.65024257  0.9336089 ] | Action Space: Box([-1.  0.  0.], 1.0, (3,), float32)
+Episode   50/1000 | Reward:  -82.99 | Length: 1000 | Avg Reward (last 50):  -64.81 | Avg Loss: 1.2418 | Buffer: 49576
+
+✗ Error with configuration 1: [WinError 64] The specified network name is no longer available
+
+======================================================================
+Configuration 2/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.001
+  gamma: 0.99
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 128
+  buffer_size: 25000
+
+
+✗ Error with configuration 2: [WinError 64] The specified network name is no longer available
+
+======================================================================
+Configuration 3/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0003
+  gamma: 0.995
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 256
+  buffer_size: 50000
+
+
+✗ Error with configuration 3: [WinError 64] The specified network name is no longer available
+
+======================================================================
+Configuration 4/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0001
+  gamma: 0.99
+  tau: 0.01
+  alpha: 0.2
+  batch_size: 512
+  buffer_size: 100000
+
+
+✗ Error with configuration 4: [WinError 64] The specified network name is no longer available
+
+======================================================================
+Configuration 5/5
+======================================================================
+
+======================================================================
+Training SAC on CarRacing-v3 (Box2D, Continuous Actions)
+======================================================================
+
+Image observation space: (96, 96, 3)
+Flattened to 27648 dimensions
+Action dimension: 3
+Action space: Box([-1.  0.  0.], 1.0, (3,), float32)
+
+Hyperparameters:
+  learning_rate: 0.0005
+  gamma: 0.98
+  tau: 0.005
+  alpha: 0.2
+  batch_size: 128
+  buffer_size: 50000
+
