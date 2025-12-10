@@ -3,6 +3,28 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical, Normal
+
+class CNNFeatureExtractor(nn.Module):
+    """CNN for extracting features from image observations (e.g., CarRacing)"""
+    def __init__(self, input_channels=3):
+        super(CNNFeatureExtractor, self).__init__()
+        # Conv layers for 96x96x3 input (CarRacing-v3)
+        self.conv1 = nn.Conv2d(input_channels, 32, kernel_size=8, stride=4)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2)
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
+        
+        # Calculate output size: ((96-8)/4+1) = 23, ((23-4)/2+1) = 10, ((10-3)/1+1) = 8
+        # Output: 64 * 8 * 8 = 4096
+        self.feature_dim = 64 * 8 * 8
+        
+    def forward(self, x):
+        # Input: (batch, 3, 96, 96)
+        x = F.relu(self.conv1(x))  # (batch, 32, 23, 23)
+        x = F.relu(self.conv2(x))  # (batch, 64, 10, 10)
+        x = F.relu(self.conv3(x))  # (batch, 64, 8, 8)
+        x = x.view(x.size(0), -1)  # (batch, 4096)
+        return x
+
 class PolicyNetwork(nn.Module):
     def __init__(self, state_dim, action_dim, hidden_dim=256, is_continuous=True):
         super(PolicyNetwork, self).__init__()
@@ -120,3 +142,92 @@ class GaussianPolicy(nn.Module):
         log_prob = log_prob.sum(1, keepdim=True)
         mean = torch.tanh(mean) * self.action_scale + self.action_bias
         return action, log_prob, mean
+
+class CNNGaussianPolicy(nn.Module):
+    """CNN-based Gaussian Policy for image observations"""
+    def __init__(self, input_channels, action_dim, hidden_dim, action_space=None):
+        super(CNNGaussianPolicy, self).__init__()
+        
+        # CNN feature extractor
+        self.cnn = CNNFeatureExtractor(input_channels)
+        
+        # Fully connected layers
+        self.fc1 = nn.Linear(self.cnn.feature_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim)
+        
+        self.mean_linear = nn.Linear(hidden_dim, action_dim)
+        self.log_std_linear = nn.Linear(hidden_dim, action_dim)
+        
+        self.apply(weights_init_)
+        
+        # Action rescaling
+        if action_space is None:
+            action_scale = torch.tensor(1.)
+            action_bias = torch.tensor(0.)
+        else:
+            action_scale = torch.FloatTensor((action_space.high - action_space.low) / 2.)
+            action_bias = torch.FloatTensor((action_space.high + action_space.low) / 2.)
+        
+        self.register_buffer('action_scale', action_scale)
+        self.register_buffer('action_bias', action_bias)
+    
+    def forward(self, state):
+        # Input: (batch, 3, 96, 96)
+        x = self.cnn(state)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        mean = self.mean_linear(x)
+        log_std = self.log_std_linear(x)
+        log_std = torch.clamp(log_std, min=-20, max=2)
+        return mean, log_std
+    
+    def sample(self, state):
+        mean, log_std = self.forward(state)
+        std = log_std.exp()
+        normal = Normal(mean, std)
+        x_t = normal.rsample()
+        y_t = torch.tanh(x_t)
+        action = y_t * self.action_scale + self.action_bias
+        
+        log_prob = normal.log_prob(x_t)
+        log_prob -= torch.log(self.action_scale * (1 - y_t.pow(2)) + 1e-6)
+        log_prob = log_prob.sum(1, keepdim=True)
+        mean = torch.tanh(mean) * self.action_scale + self.action_bias
+        return action, log_prob, mean
+
+class CNNQNetwork(nn.Module):
+    """CNN-based Q-Network for image observations"""
+    def __init__(self, input_channels, action_dim, hidden_dim):
+        super(CNNQNetwork, self).__init__()
+        
+        # CNN feature extractors for both Q-networks
+        self.cnn1 = CNNFeatureExtractor(input_channels)
+        self.cnn2 = CNNFeatureExtractor(input_channels)
+        
+        # Q1 architecture
+        self.l1 = nn.Linear(self.cnn1.feature_dim + action_dim, hidden_dim)
+        self.l2 = nn.Linear(hidden_dim, hidden_dim)
+        self.l3 = nn.Linear(hidden_dim, 1)
+        
+        # Q2 architecture
+        self.l4 = nn.Linear(self.cnn2.feature_dim + action_dim, hidden_dim)
+        self.l5 = nn.Linear(hidden_dim, hidden_dim)
+        self.l6 = nn.Linear(hidden_dim, 1)
+        
+        self.apply(weights_init_)
+    
+    def forward(self, state, action):
+        # Input state: (batch, 3, 96, 96)
+        x1 = self.cnn1(state)
+        x1 = torch.cat([x1, action], 1)
+        x1 = F.relu(self.l1(x1))
+        x1 = F.relu(self.l2(x1))
+        x1 = self.l3(x1)
+        
+        x2 = self.cnn2(state)
+        x2 = torch.cat([x2, action], 1)
+        x2 = F.relu(self.l4(x2))
+        x2 = F.relu(self.l5(x2))
+        x2 = self.l6(x2)
+        
+        return x1, x2

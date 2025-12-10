@@ -58,19 +58,21 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
                    record_video=record_video, video_folder=video_folder)
     
     # Get environment dimensions
-    # Handle different observation space types (vector vs image)
-    if len(env.observation_space.shape) == 1:
+    # Determine if we need CNN (for image observations) or MLP (for vector observations)
+    use_cnn = len(env.observation_space.shape) == 3
+    
+    if use_cnn:
+        # Image observation (CarRacing-v3)
+        image_shape = env.observation_space.shape  # (96, 96, 3)
+        state_dim = np.prod(image_shape)  # Not used but required
+        print(f"Image observation space: {image_shape}")
+        print(f"Using CNN-based networks")
+    else:
         # Vector observation (LunarLander-v3)
         state_dim = env.observation_space.shape[0]
+        image_shape = None
         print(f"Vector observation space: {state_dim} dimensions")
-    elif len(env.observation_space.shape) == 3:
-        # Image observation (CarRacing-v3)
-        # Flatten the image for now (or use CNN - but for simplicity, flatten)
-        state_dim = np.prod(env.observation_space.shape)
-        print(f"Image observation space: {env.observation_space.shape}")
-        print(f"Flattened to {state_dim} dimensions")
-    else:
-        raise ValueError(f"Unsupported observation space shape: {env.observation_space.shape}")
+        print(f"Using MLP-based networks")
     
     action_dim = env.action_space.shape[0]
     
@@ -88,6 +90,7 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
     wandb_config['num_episodes'] = num_episodes
     wandb_config['state_dim'] = state_dim
     wandb_config['action_dim'] = action_dim
+    wandb_config['use_cnn'] = use_cnn
     
     use_wandb = True
     try:
@@ -96,7 +99,7 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
             config=wandb_config,
             name=run_name,
             group=f"{env_name}",
-            tags=["SAC", "Box2D", env_name],
+            tags=["SAC", "Box2D", env_name, "CNN" if use_cnn else "MLP"],
             reinit=True,
             mode="online"  # Try online first
         )
@@ -109,7 +112,7 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
                 config=wandb_config,
                 name=run_name,
                 group=f"{env_name}",
-                tags=["SAC", "Box2D", env_name],
+                tags=["SAC", "Box2D", env_name, "CNN" if use_cnn else "MLP"],
                 reinit=True,
                 mode="offline"  # Fallback to offline mode
             )
@@ -120,7 +123,15 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
             use_wandb = False
     
     # Initialize agent
-    agent = SACAgent(state_dim, action_dim, env.action_space, config)
+    agent = SACAgent(
+        state_dim=state_dim,
+        action_dim=action_dim,
+        action_space=env.action_space,
+        config=config,
+        use_cnn=use_cnn,
+        input_channels=3 if use_cnn else None,
+        image_shape=image_shape
+    )
     print(f"\nAgent initialized on device: {agent.device}")
     if torch.cuda.is_available():
         print(f"GPU: {torch.cuda.get_device_name(0)}")
@@ -146,34 +157,18 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
         episode_losses = []
         
         while not done:
-            # Flatten state if it's an image
-            if len(state.shape) > 1:
-                # Normalize image to [0, 1] range (CarRacing images are uint8 [0, 255])
-                state_normalized = state.astype(np.float32) / 255.0
-                state_flat = state_normalized.flatten()
-            else:
-                state_flat = state
+            # Select action (agent handles image/vector processing internally)
+            action = agent.select_action(state)
             
-            # Select action
-            action = agent.select_action(state_flat)
-            
-            # Clip action to valid range (important for CarRacing)
+            # Clip action to valid range
             action = np.clip(action, env.action_space.low, env.action_space.high)
             
             # Take step
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             
-            # Flatten next_state if it's an image
-            if len(next_state.shape) > 1:
-                # Normalize image to [0, 1] range
-                next_state_normalized = next_state.astype(np.float32) / 255.0
-                next_state_flat = next_state_normalized.flatten()
-            else:
-                next_state_flat = next_state
-            
-            # Store transition
-            agent.store_transition(state_flat, action, reward, next_state_flat, done)
+            # Store transition (ImageReplayBuffer handles images, ReplayBuffer handles vectors)
+            agent.store_transition(state, action, reward, next_state, done)
             
             # Update agent if we have enough samples
             if agent.memory.size > config['batch_size']:
@@ -181,7 +176,7 @@ def train_sac_box2d(env_name, config, num_episodes=500, record_video=True, save_
                 if loss > 0:
                     episode_losses.append(loss)
             
-            state = next_state_flat
+            state = next_state
             total_reward += reward
             steps += 1
         
