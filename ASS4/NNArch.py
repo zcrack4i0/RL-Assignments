@@ -6,23 +6,22 @@ from torch.distributions import Categorical, Normal
 
 class CNNFeatureExtractor(nn.Module):
     """CNN for extracting features from image observations (e.g., CarRacing)"""
-    def __init__(self, input_channels=3):
+    def __init__(self, input_channels=1):
         super(CNNFeatureExtractor, self).__init__()
-        # Conv layers for 96x96x3 input (CarRacing-v3)
+        # Conv layers for grayscale 84x84 input after preprocessing
         self.conv1 = nn.Conv2d(input_channels, 32, kernel_size=8, stride=4)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2)
         self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
         
-        # Calculate output size: ((96-8)/4+1) = 23, ((23-4)/2+1) = 10, ((10-3)/1+1) = 8
-        # Output: 64 * 8 * 8 = 4096
-        self.feature_dim = 64 * 8 * 8
+        # Output dims for 84x84 input: 20x20 -> 9x9 -> 7x7 => 64 * 7 * 7 = 3136
+        self.feature_dim = 64 * 7 * 7
         
     def forward(self, x):
-        # Input: (batch, 3, 96, 96)
-        x = F.relu(self.conv1(x))  # (batch, 32, 23, 23)
-        x = F.relu(self.conv2(x))  # (batch, 64, 10, 10)
-        x = F.relu(self.conv3(x))  # (batch, 64, 8, 8)
-        x = x.view(x.size(0), -1)  # (batch, 4096)
+        # Input: (batch, C, 84, 84)
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = x.reshape(x.size(0), -1)
         return x
 
 class PolicyNetwork(nn.Module):

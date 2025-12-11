@@ -7,6 +7,7 @@ import torch
 import numpy as np
 import gymnasium as gym
 from gymnasium.wrappers import RecordVideo
+from PIL import Image
 from SAC import SACAgent
 import json
 from datetime import datetime
@@ -17,12 +18,30 @@ os.makedirs("saved_models", exist_ok=True)
 os.makedirs("videos", exist_ok=True)
 os.makedirs("training_logs", exist_ok=True)
 
+
+class GrayResizeWrapper(gym.ObservationWrapper):
+    """Convert RGB obs to grayscale and resize to square output."""
+
+    def __init__(self, env, size=84):
+        super().__init__(env)
+        self.size = size
+        self.observation_space = gym.spaces.Box(
+            low=0, high=255, shape=(size, size, 1), dtype=np.uint8
+        )
+
+    def observation(self, observation):
+        img = Image.fromarray(observation)
+        img = img.convert("L")  # grayscale
+        img = img.resize((self.size, self.size), resample=Image.BILINEAR)
+        arr = np.array(img, dtype=np.uint8)
+        return arr[..., None]
+
 class CarRacingWrapper(gym.Wrapper):
     """
     Wrapper for CarRacing-v3 to handle episode termination better
     and add frame skipping for efficiency
     """
-    def __init__(self, env, frame_skip=4, neg_reward_threshold=-10):
+    def __init__(self, env, frame_skip=4, neg_reward_threshold=100):
         super().__init__(env)
         self.frame_skip = frame_skip
         self.neg_reward_threshold = neg_reward_threshold
@@ -59,20 +78,23 @@ class CarRacingWrapper(gym.Wrapper):
 def make_env(env_name="CarRacing-v3", render_mode=None, record_video=False, video_folder=None, frame_skip=4):
     """Create CarRacing environment with optimizations"""
     env = gym.make(env_name, render_mode=render_mode, continuous=True, lap_complete_percent=0.95)
-    
-    # Apply wrapper for frame skipping and better termination
-    env = CarRacingWrapper(env, frame_skip=frame_skip)
-    
-    # Record video during training
+
+    # Convert to grayscale and resize to reduce input size
+    env = GrayResizeWrapper(env, size=84)
+
+    # Record video BEFORE frame skipping so all frames are captured
     if record_video:
         if video_folder is None:
             video_folder = f"./videos/sac_{env_name}_training"
         os.makedirs(video_folder, exist_ok=True)
         env = RecordVideo(
-            env, 
+            env,
             video_folder=video_folder,
             episode_trigger=lambda x: x % 50 == 0  # Record every 50th episode
         )
+
+    # Apply wrapper for frame skipping and better termination
+    env = CarRacingWrapper(env, frame_skip=frame_skip)
     
     return env
 
@@ -141,7 +163,7 @@ def train_carracing(config, num_episodes=2000, record_video=True, save_best=True
         action_space=env.action_space,
         config=config,
         use_cnn=True,
-        input_channels=3,
+        input_channels=image_shape[2] if len(image_shape) == 3 else 1,
         image_shape=image_shape
     )
     
@@ -364,7 +386,7 @@ def main():
             'batch_size': 128,
             'buffer_size': 50000,
             'warmup_episodes': 10,
-            'frame_skip': 4,
+            'frame_skip': 2,
             'max_steps': 1000
         },
         {
@@ -375,7 +397,7 @@ def main():
             'batch_size': 256,
             'buffer_size': 100000,
             'warmup_episodes': 20,
-            'frame_skip': 4,
+            'frame_skip': 2,
             'max_steps': 1000
         },
         {
@@ -386,7 +408,7 @@ def main():
             'batch_size': 64,
             'buffer_size': 50000,
             'warmup_episodes': 15,
-            'frame_skip': 4,
+            'frame_skip': 2,
             'max_steps': 1000
         }
     ]
@@ -460,7 +482,7 @@ if __name__ == "__main__":
             'batch_size': 128,
             'buffer_size': 50000,
             'warmup_episodes': 10,
-            'frame_skip': 4,
+            'frame_skip': 2,
             'max_steps': 1000
         }
         
